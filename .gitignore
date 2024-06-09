@@ -1,49 +1,143 @@
-# History files
-.Rhistory
-.Rapp.history
+#Instal Package Cluster dan tidyverse
+library(cluster)
+library(tidyverse)
+#Import Data
+data1=read.delim("clipboard")
+data1
+#
+data1$Pengeluaran..Rp. <- as.numeric(gsub("[^0-9]", "", data1$Pengeluaran..Rp.))
+# Mengubah kelas kolom "Nama" menjadi faktor
+data1$Nama <- factor(data1$Nama)
+#
+#
+# Mengubah tipe data numerik menjadi integer
+data1$Pengeluaran..Rp. <- as.integer(data1$Pengeluaran..Rp.)
 
-# Session Data files
-.RData
-.RDataTmp
+# Memeriksa hasil perubahan
+str(data1)
+#
+data1$Pengeluaran..Rp. <- as.numeric(gsub("[^0-9]", "", data1$Pengeluaran..Rp.))
+summary(data1)
+View(data1)
+summary(data1)
+str(data1)
 
-# User-specific files
-.Ruserdata
+#Melakukan Transformasi
+#1. Scale, 2. min max
+datafix=scale(data1[,2])
+datafix
+view(datafix)
 
-# Example code in package build process
-*-Ex.R
+#Menghitung Jarak
+jarak=dist(datafix)
+#Melihat Hasil Dari Perhitungan Jarak
+jarak
 
-# Output files from R CMD build
-/*.tar.gz
+#Melakukan Proses Clustering Menggunakan Metode Hirarrki Clustering
+#Menggunakan Metode Single
+hirarkisingle=hclust(jarak, method = "single")
+hirarkisingle
+plot(hirarkisingle)
 
-# Output files from R CMD check
-/*.Rcheck/
+#-------Google Start------------#
+#Metode Ave
+metode1<-hclust(dist(scale(data1[,2])),method = "ave")
+plot(metode1)
+#----------------------#
+#----------------------#
+metode1 <- hclust(dist(scale(data1[, 2])), method = "ave")
 
-# RStudio files
-.Rproj.user/
+# Memotong dendrogram menjadi 3 grup
+cluster_labels <- cutree(metode1, k = 3)
 
-# produced vignettes
-vignettes/*.html
-vignettes/*.pdf
+# Plot dendrogram dengan warna yang berbeda untuk setiap cluster
+plot(metode1, hang = -1, main = "Dendrogram with 3 Clusters")
+rect.hclust(metode1, k = 3, border = 2:4)
+#----------------------#
+#----------------------#
 
-# OAuth2 token, see https://github.com/hadley/httr/releases/tag/v0.3
-.httr-oauth
+#Menggunakan Metode Complete
+metode2<-hclust(dist(scale(data1[,2])),method = "complete")
+plot(metode2)
+#----------------------#
+#----------------------#
+metode2 <- hclust(dist(scale(data1[, 2])), method = "complete")
 
-# knitr and R markdown default cache directories
-*_cache/
-/cache/
+# Memotong dendrogram menjadi 3 grup
+cluster_labels <- cutree(metode2, k = 3)
 
-# Temporary files created by R markdown
-*.utf8.md
-*.knit.md
+# Plot dendrogram dengan warna yang berbeda untuk setiap cluster
+plot(metode2, hang = -1, main = "Dendrogram with 3 Clusters")
+rect.hclust(metode2, k = 3, border = 2:4)
+#----------------------#
+#----------------------#
 
-# R Environment Variables
-.Renviron
+#Menggunakan Metode Ward.D
+metode3<-hclust(dist(scale(data1[,2])),method = "ward.D")
+plot(metode3)
+#----------------------#
+#----------------------#
+# Menggunakan Metode Ward.D
+metode3 <- hclust(dist(scale(data1[, 2])), method = "ward.D")
 
-# pkgdown site
-docs/
+# Memotong dendrogram menjadi 3 grup
+cluster_labels <- cutree(metode3, k = 3)
 
-# translation temp files
-po/*~
+# Plot dendrogram dengan warna yang berbeda untuk setiap cluster
+plot(metode3, hang = -1, main = "Dendrogram with 3 Clusters")
+rect.hclust(metode3, k = 3, border = 2:4)
 
-# RStudio Connect folder
-rsconnect/
+#----------------------#
+#----------------------#
+
+#Menggunakan Metode Centroid
+metode4<-hclust(dist(scale(data1[,2])),method = "centroid")
+plot(metode4)
+#----------------------#
+#----------------------#
+metode4 <- hclust(dist(scale(data1[, 2])), method = "centroid")
+
+# Memotong dendrogram menjadi 3 grup
+cluster_labels <- cutree(metode4, k = 3)
+
+# Plot dendrogram dengan warna yang berbeda untuk setiap cluster
+plot(metode4, hang = -1, main = "Dendrogram with 3 Clusters")
+rect.hclust(metode4, k = 3, border = 2:4)
+#----------------------#
+#----------------------#
+
+#Menggunakan Metode Single
+metode5<-hclust(dist(scale(data1[,2])),method = "single")
+plot(metode5)
+#----------------------#
+#----------------------#
+metode5 <- hclust(dist(scale(data1[, 2])), method = "single")
+
+# Memotong dendrogram menjadi 3 grup
+cluster_labels <- cutree(metode5, k = 3)
+
+# Plot dendrogram dengan warna yang berbeda untuk setiap cluster
+plot(metode5, hang = -1, main = "Dendrogram with 3 Clusters")
+rect.hclust(metode5, k = 3, border = 2:4)
+#----------------------#
+#----------------------#
+
+#Pengelompokan Data
+anggota <- cutree(metode3,3)
+tabel=data.frame(data1,anggota)
+tabel
+view(tabel)
+
+#Menyimpan file ke excel
+write.csv(tabel, file = "D:\\LDPlayer\\Documents\\Semester 6\\Komputasi dan Simulasi\\Hasil.csv")
+#-------Google End------------#
+
+#Melihat Dendogram
+plot(hirarkisingle, data1$Nama, labels = data1$Nama)
+rect.hclust(hirarkisingle,2)
+rect.hclust(hirarkisingle,3)
+
+#Membentu Hasil Cluster dalam Bentuk Tabel
+anggotasingle=data.frame(id=data1$Nama, cutree(hirarkisingle, k=3))
+anggotasingle
+view(anggotasingle)
